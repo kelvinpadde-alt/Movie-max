@@ -1,1348 +1,153 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Movie Max — Trident Technologies</title>
+
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;500;600;700&family=Exo+2:wght@300;400;600;700;900&display=swap" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
 <style>
-  :root {
-    --black: #0D0D0D;
-    --dark: #1A1A1A;
-    --darker: #111111;
-    --red: #FF2E63;
-    --red-dim: rgba(255,46,99,0.15);
-    --red-glow: rgba(255,46,99,0.5);
-    --blue: #08D9D6;
-    --blue-dim: rgba(8,217,214,0.12);
-    --blue-glow: rgba(8,217,214,0.45);
-    --white: #FFFFFF;
-    --grey: #888;
-    --card-bg: rgba(255,255,255,0.04);
-    --glass: rgba(13,13,13,0.75);
-  }
+:root {
+  --black: #0D0D0D;
+  --dark: #1A1A1A;
+  --darker: #111111;
+  --red: #FF2E63;
+  --blue: #08D9D6;
+  --white: #FFFFFF;
+  --grey: #888;
+}
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-    
-    body {
-    background: var(--black);
-    color: var(--white);
-    font-family: 'Exo 2', sans-serif;
-    overflow-x: hidden;
-    min-height: 100vh;
-    padding-bottom: 80px;
-  }
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-  /* SCROLLBAR */
-  ::-webkit-scrollbar { width: 4px; height: 4px; }
-  ::-webkit-scrollbar-track { background: var(--dark); }
-  ::-webkit-scrollbar-thumb { background: var(--red); border-radius: 2px; }
+body {
+  background: var(--black);
+  color: var(--white);
+  font-family: 'Exo 2', sans-serif;
+  overflow-x: hidden;
+  min-height: 100vh;
+  padding-bottom: 80px;
+}
 
-  /* ─── SCREENS ─── */
-  .screen { display: none; animation: fadeIn 0.4s ease; }
-  .screen.active { display: block; }
+/* HERO */
+.hero {
+  padding: 80px 20px;
+  text-align: center;
+  background: linear-gradient(135deg, #111, #000);
+}
 
-  @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
-  @keyframes zoomIn { from { opacity:0; transform:scale(0.96); } to { opacity:1; transform:scale(1); } }
-  @keyframes glowPulse {
-    0%,100% { box-shadow: 0 0 16px var(--red-glow), 0 0 32px var(--red-glow); }
-    50% { box-shadow: 0 0 28px var(--red-glow), 0 0 56px var(--red-glow), 0 0 80px rgba(255,46,99,0.2); }
-  }
-  @keyframes bluePulse {
-    0%,100% { box-shadow: 0 0 16px var(--blue-glow), 0 0 32px var(--blue-glow); }
-    50% { box-shadow: 0 0 28px var(--blue-glow), 0 0 56px var(--blue-glow), 0 0 80px rgba(8,217,214,0.2); }
-  }
-  @keyframes shimmer {
-    0% { background-position: -200% 0; }
-    100% { background-position: 200% 0; }
-  }
-  @keyframes scanline {
-    0% { top: -10%; }
-    100% { top: 110%; }
-  }
+.hero h1 {
+  font-size: 42px;
+  color: var(--red);
+  font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: 2px;
+}
 
-  /* ─── TOP NAV ─── */
-  .topnav {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 16px 24px;
-    background: linear-gradient(to bottom, rgba(13,13,13,0.95) 0%, transparent 100%);
-    backdrop-filter: blur(8px);
-  }
-  .logo {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 28px;
-    letter-spacing: 3px;
-    background: linear-gradient(135deg, var(--red) 0%, #FF6B9D 50%, var(--blue) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    text-shadow: none;
-    filter: drop-shadow(0 0 12px var(--red-glow));
-  }
-  .logo span { color: var(--blue); -webkit-text-fill-color: var(--blue); filter: none; }
-  .topnav-right { display: flex; align-items: center; gap: 16px; }
-  .avatar {
-    width: 36px; height: 36px; border-radius: 50%;
-    background: linear-gradient(135deg, var(--red), var(--blue));
-    display: flex; align-items: center; justify-content: center;
-    font-weight: 700; font-size: 14px; cursor: pointer;
-    box-shadow: 0 0 12px var(--red-glow);
-  }
-  .topnav-tag {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 11px; letter-spacing: 2px; color: var(--blue);
-    opacity: 0.7; text-transform: uppercase;
-  }
+.hero p {
+  color: var(--grey);
+  margin-top: 10px;
+}
 
-  /* ─── HERO BANNER ─── */
-  .hero {
-    position: relative; height: 88vh; min-height: 500px;
-    display: flex; align-items: flex-end;
-    overflow: hidden;
-  }
-  .hero-bg {
-    position: absolute; inset: 0;
-    background: linear-gradient(135deg, #0D0D0D 0%, #1a0510 30%, #050d1a 70%, #0D0D0D 100%);
-    overflow: hidden;
-  }
-  .hero-poster {
-    position: absolute; inset: 0;
-    background-image: url('https://m.media-amazon.com/images/M/MV5BMDBmYTZjNjUtN2M1MS00MTQ2LTk2ODgtNzc2M2QyZGE5NTVjXkEyXkFqcGdeQXVyNzAwMjU2MTY@._V1_.jpg');
-    background-size: cover; background-position: center top;
-    opacity: 0.35;
-    filter: blur(1px) saturate(1.4);
-    transform: scale(1.05);
-    transition: transform 8s ease;
-  }
-  .hero:hover .hero-poster { transform: scale(1.08); }
-  .hero-overlay {
-    position: absolute; inset: 0;
-    background: linear-gradient(to top,
-      rgba(13,13,13,1) 0%,
-      rgba(13,13,13,0.8) 25%,
-      rgba(13,13,13,0.3) 60%,
-      rgba(13,13,13,0.1) 100%);
-  }
-  .hero-overlay-sides {
-    position: absolute; inset: 0;
-    background: linear-gradient(to right, rgba(13,13,13,0.9) 0%, transparent 40%, transparent 60%, rgba(13,13,13,0.6) 100%);
-  }
-  /* Scanline effect */
-  .hero-scan {
-    position: absolute; left: 0; right: 0; height: 2px;
-    background: linear-gradient(to right, transparent, rgba(8,217,214,0.3), transparent);
-    animation: scanline 6s linear infinite;
-    pointer-events: none;
-  }
-  .hero-content {
-    position: relative; z-index: 2;
-    padding: 40px 40px 60px;
-    max-width: 620px;
-  }
-  .hero-badge {
-    display: inline-flex; align-items: center; gap: 6px;
-    background: var(--red-dim); border: 1px solid var(--red);
-    color: var(--red); padding: 4px 12px; border-radius: 4px;
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 11px; font-weight: 700; letter-spacing: 3px;
-    margin-bottom: 16px;
-    box-shadow: 0 0 12px var(--red-dim);
-  }
-  .hero-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(48px, 8vw, 88px);
-    line-height: 0.95;
-    letter-spacing: 2px;
-    text-shadow: 0 0 40px rgba(255,46,99,0.4), 0 4px 20px rgba(0,0,0,0.8);
-    margin-bottom: 16px;
-  }
-  .hero-title em { color: var(--blue); font-style: normal; }
-  .hero-meta {
-    display: flex; align-items: center; gap: 16px;
-    margin-bottom: 20px;
-    font-family: 'Rajdhani', sans-serif; font-size: 14px; color: var(--grey);
-  }
-  .hero-meta .rating { color: #FFD700; font-weight: 700; }
-  .hero-meta .dot { width: 3px; height: 3px; border-radius: 50%; background: var(--grey); }
-  .hero-desc {
-    font-size: 14px; line-height: 1.7; color: rgba(255,255,255,0.7);
-    margin-bottom: 28px; font-weight: 300; max-width: 480px;
-  }
-  .hero-buttons { display: flex; gap: 12px; align-items: center; }
+/* SECTION */
+.section {
+  padding: 20px;
+}
 
-  /* ─── BUTTONS ─── */
-  .btn-primary {
-    display: inline-flex; align-items: center; gap: 10px;
-    background: linear-gradient(135deg, var(--red) 0%, #c5003f 100%);
-    color: var(--white); border: none; border-radius: 8px;
-    padding: 14px 28px; font-family: 'Rajdhani', sans-serif;
-    font-size: 16px; font-weight: 700; letter-spacing: 2px;
-    cursor: pointer; text-transform: uppercase;
-    box-shadow: 0 0 20px var(--red-glow), 0 4px 20px rgba(0,0,0,0.5);
-    animation: glowPulse 2.5s ease infinite;
-    transition: transform 0.2s, filter 0.2s;
-    position: relative; overflow: hidden;
-  }
-  .btn-primary::before {
-    content: ''; position: absolute; inset: 0;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
-    background-size: 200% 100%;
-    animation: shimmer 2s linear infinite;
-  }
-  .btn-primary:hover { transform: translateY(-2px) scale(1.03); filter: brightness(1.15); }
+.section h2 {
+  margin-bottom: 12px;
+  font-size: 18px;
+  letter-spacing: 1px;
+}
 
-  .btn-secondary {
-    display: inline-flex; align-items: center; gap: 10px;
-    background: rgba(255,255,255,0.08);
-    border: 1px solid rgba(8,217,214,0.4);
-    color: var(--white); border-radius: 8px;
-    padding: 14px 24px; font-family: 'Rajdhani', sans-serif;
-    font-size: 15px; font-weight: 600; letter-spacing: 1px;
-    cursor: pointer; text-transform: uppercase;
-    backdrop-filter: blur(8px);
-    box-shadow: 0 0 12px var(--blue-dim);
-    transition: all 0.25s;
-  }
-  .btn-secondary:hover {
-    background: rgba(8,217,214,0.12);
-    box-shadow: 0 0 20px var(--blue-glow);
-    border-color: var(--blue);
-    transform: translateY(-2px);
-  }
+/* GRID */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px;
+}
 
-  /* ─── SECTIONS ─── */
-  .section { padding: 8px 24px 24px; }
-  .section-header {
-    display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 18px;
-  }
-  .section-title {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 20px; font-weight: 700; letter-spacing: 2px;
-    text-transform: uppercase; color: var(--white);
-    display: flex; align-items: center; gap: 10px;
-  }
-  .section-title::before {
-    content: ''; width: 4px; height: 20px; border-radius: 2px;
-    background: linear-gradient(to bottom, var(--red), var(--blue));
-    box-shadow: 0 0 8px var(--red-glow);
-  }
-  .see-all {
-    font-family: 'Rajdhani', sans-serif; font-size: 13px;
-    color: var(--blue); letter-spacing: 1px; cursor: pointer;
-    text-transform: uppercase; border: none; background: none;
-    transition: all 0.2s;
-  }
-  .see-all:hover { text-shadow: 0 0 8px var(--blue-glow); }
+.card {
+  background: #1a1a1a;
+  padding: 15px;
+  border-radius: 10px;
+  text-align: center;
+  transition: 0.3s;
+  cursor: pointer;
+}
 
-  /* ─── MOVIE CARDS ROW ─── */
-  .cards-row {
-    display: flex; gap: 14px; overflow-x: auto;
-    padding-bottom: 12px; scroll-snap-type: x mandatory;
-    scrollbar-width: none;
-  }
-  .cards-row::-webkit-scrollbar { display: none; }
+.card:hover {
+  transform: scale(1.05);
+  background: #2a2a2a;
+}
 
-  .movie-card {
-    flex: 0 0 160px; border-radius: 12px;
-    overflow: hidden; position: relative;
-    cursor: pointer; scroll-snap-align: start;
-    transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s;
-    background: var(--dark);
-    animation: zoomIn 0.4s ease backwards;
-  }
-  .movie-card:hover {
-    transform: translateY(-8px) scale(1.04);
-    box-shadow: 0 12px 40px rgba(255,46,99,0.35), 0 0 0 1px rgba(255,46,99,0.4);
-    z-index: 10;
-  }
-  .movie-card-img {
-    width: 100%; aspect-ratio: 2/3; object-fit: cover;
-    display: block;
-    transition: filter 0.3s;
-  }
-  .movie-card:hover .movie-card-img { filter: brightness(1.1) saturate(1.2); }
+/* NAV */
+.topnav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0,0,0,0.8);
+  padding: 12px 20px;
+  display: flex;
+  justify-content: space-between;
+  z-index: 100;
+}
 
-  .movie-card-overlay {
-    position: absolute; inset: 0;
-    background: linear-gradient(to top, rgba(13,13,13,0.95) 0%, transparent 60%);
-    opacity: 0; transition: opacity 0.3s;
-    display: flex; flex-direction: column;
-    justify-content: flex-end; padding: 12px;
-  }
-  .movie-card:hover .movie-card-overlay { opacity: 1; }
-  .card-play {
-    width: 36px; height: 36px; border-radius: 50%;
-    background: var(--red); display: flex; align-items: center; justify-content: center;
-    margin-bottom: 8px; box-shadow: 0 0 16px var(--red-glow);
-  }
-  .card-play i { font-size: 14px; margin-left: 2px; }
-  .card-title-hover {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 13px; font-weight: 600; letter-spacing: 0.5px;
-    line-height: 1.3;
-  }
+.logo {
+  font-family: 'Bebas Neue', sans-serif;
+  color: var(--red);
+  font-size: 22px;
+  letter-spacing: 2px;
+}
 
-  .rating-badge {
-    position: absolute; top: 8px; right: 8px;
-    background: rgba(13,13,13,0.85);
-    backdrop-filter: blur(6px);
-    border: 1px solid rgba(255,215,0,0.3);
-    border-radius: 6px; padding: 2px 7px;
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 12px; font-weight: 700; color: #FFD700;
-    display: flex; align-items: center; gap: 3px;
-  }
-  .rating-badge i { font-size: 9px; }
-
-  .card-info {
-    padding: 10px 10px 12px;
-    background: var(--dark);
-  }
-  .card-name {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 13px; font-weight: 600;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  }
-  .card-year { font-size: 11px; color: var(--grey); margin-top: 2px; }
-
-  /* ─── FEATURED WIDE CARD ─── */
-  .wide-card {
-    flex: 0 0 280px; border-radius: 12px; overflow: hidden;
-    position: relative; cursor: pointer;
-    background: var(--dark);
-    transition: transform 0.3s, box-shadow 0.3s;
-  }
-  .wide-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 12px 40px var(--blue-dim), 0 0 0 1px rgba(8,217,214,0.3);
-  }
-  .wide-card-img { width: 100%; height: 160px; object-fit: cover; }
-  .wide-card-content { padding: 14px; }
-  .wide-card-title { font-family: 'Rajdhani', sans-serif; font-size: 16px; font-weight: 700; }
-  .wide-card-sub { font-size: 12px; color: var(--grey); margin-top: 4px; }
-  .wide-card-badge {
-    display: inline-block; padding: 3px 8px; border-radius: 4px;
-    font-size: 11px; font-family: 'Rajdhani'; font-weight: 700; letter-spacing: 1px;
-    margin-top: 8px;
-  }
-  .badge-red { background: var(--red-dim); color: var(--red); border: 1px solid rgba(255,46,99,0.3); }
-  .badge-blue { background: var(--blue-dim); color: var(--blue); border: 1px solid rgba(8,217,214,0.3); }
-
-  /* ─── BOTTOM NAV ─── */
-  .bottom-nav {
-    position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
-    display: flex; align-items: center;
-    background: rgba(13,13,13,0.92);
-    backdrop-filter: blur(20px);
-    border-top: 1px solid rgba(255,255,255,0.06);
-    padding: 10px 0 14px;
-  }
-  .nav-item {
-    flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px;
-    cursor: pointer; padding: 6px;
-    transition: all 0.2s;
-    position: relative;
-  }
-  .nav-item i { font-size: 20px; color: var(--grey); transition: all 0.25s; }
-  .nav-item span {
-    font-family: 'Rajdhani', sans-serif; font-size: 10px; letter-spacing: 1px;
-    color: var(--grey); text-transform: uppercase; transition: all 0.25s;
-  }
-  .nav-item.active i { color: var(--red); filter: drop-shadow(0 0 6px var(--red)); }
-  .nav-item.active span { color: var(--red); }
-  .nav-item.active::before {
-    content: ''; position: absolute; top: -1px; left: 50%; transform: translateX(-50%);
-    width: 40px; height: 2px; background: var(--red);
-    box-shadow: 0 0 10px var(--red-glow);
-    border-radius: 0 0 4px 4px;
-  }
-  .nav-item:hover i { color: var(--white); }
-
-  /* ─── SEARCH SCREEN ─── */
-  .search-screen-content { padding: 100px 24px 24px; }
-
-  .search-bar-wrap {
-    position: relative; margin-bottom: 28px;
-  }
-  .search-bar-wrap i {
-    position: absolute; left: 18px; top: 50%; transform: translateY(-50%);
-    color: var(--blue); font-size: 16px;
-    filter: drop-shadow(0 0 6px var(--blue-glow));
-  }
-  .search-input {
-    width: 100%; background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(8,217,214,0.35);
-    border-radius: 12px; padding: 16px 20px 16px 50px;
-    color: var(--white); font-family: 'Exo 2', sans-serif; font-size: 16px;
-    outline: none; transition: all 0.3s;
-    box-shadow: 0 0 0 0 var(--blue-glow), inset 0 1px 0 rgba(255,255,255,0.05);
-  }
-  .search-input::placeholder { color: rgba(255,255,255,0.3); }
-  .search-input:focus {
-    border-color: var(--blue);
-    box-shadow: 0 0 20px var(--blue-dim), 0 0 40px rgba(8,217,214,0.1), inset 0 0 20px rgba(8,217,214,0.03);
-    background: rgba(8,217,214,0.04);
-  }
-
-  .search-categories {
-    display: flex; gap: 8px; margin-bottom: 24px; overflow-x: auto;
-    padding-bottom: 4px; scrollbar-width: none;
-  }
-  .search-categories::-webkit-scrollbar { display: none; }
-  .cat-tag {
-    flex: 0 0 auto; padding: 7px 16px; border-radius: 20px;
-    border: 1px solid rgba(255,255,255,0.12);
-    background: rgba(255,255,255,0.04);
-    font-family: 'Rajdhani', sans-serif; font-size: 13px; font-weight: 600;
-    color: var(--grey); cursor: pointer; letter-spacing: 1px;
-    transition: all 0.2s; white-space: nowrap;
-  }
-  .cat-tag.active, .cat-tag:hover {
-    background: var(--red-dim); border-color: var(--red);
-    color: var(--red); box-shadow: 0 0 10px var(--red-dim);
-  }
-
-  .search-grid {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
-  }
-  .search-card {
-    border-radius: 10px; overflow: hidden; position: relative;
-    cursor: pointer; background: var(--dark);
-    transition: transform 0.25s, box-shadow 0.25s;
-    animation: zoomIn 0.3s ease backwards;
-  }
-  .search-card:hover {
-    transform: scale(1.04);
-    box-shadow: 0 8px 24px rgba(255,46,99,0.3);
-  }
-  .search-card img { width: 100%; aspect-ratio: 2/3; object-fit: cover; display: block; }
-  .search-card-info {
-    padding: 8px;
-    background: linear-gradient(to top, var(--dark), rgba(26,26,26,0.8));
-  }
-  .search-card-name {
-    font-family: 'Rajdhani', sans-serif; font-size: 12px; font-weight: 600;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  }
-  .search-rating { font-size: 10px; color: #FFD700; }
-  .search-empty {
-    text-align: center; padding: 60px 20px;
-    color: var(--grey);
-  }
-  .search-empty i { font-size: 40px; color: rgba(8,217,214,0.3); margin-bottom: 16px; display: block; }
-  .search-empty p { font-family: 'Rajdhani', sans-serif; font-size: 16px; letter-spacing: 1px; }
-
-  /* ─── DETAIL SCREEN ─── */
-  .detail-hero {
-    position: relative; height: 55vh; min-height: 320px;
-    overflow: hidden;
-  }
-  .detail-bg {
-    position: absolute; inset: 0;
-    background-size: cover; background-position: center top;
-    filter: blur(2px) saturate(1.3);
-    transform: scale(1.06);
-  }
-  .detail-overlay {
-    position: absolute; inset: 0;
-    background: linear-gradient(to top, var(--black) 0%, rgba(13,13,13,0.5) 50%, rgba(13,13,13,0.2) 100%);
-  }
-  .detail-back {
-    position: absolute; top: 60px; left: 20px; z-index: 10;
-    width: 40px; height: 40px; border-radius: 50%;
-    background: rgba(13,13,13,0.7); backdrop-filter: blur(8px);
-    border: 1px solid rgba(255,255,255,0.1);
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer; transition: all 0.2s;
-  }
-  .detail-back:hover { background: var(--red-dim); border-color: var(--red); }
-  .detail-poster-wrap {
-    position: absolute; bottom: -40px; left: 24px;
-    width: 120px; border-radius: 10px; overflow: hidden;
-    box-shadow: 0 12px 40px rgba(0,0,0,0.7), 0 0 0 2px rgba(255,46,99,0.3);
-    z-index: 5;
-  }
-  .detail-poster-wrap img { width: 100%; display: block; }
-
-  .detail-content { padding: 60px 24px 32px 164px; }
-  .detail-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(28px, 6vw, 52px);
-    letter-spacing: 2px;
-    line-height: 1;
-    text-shadow: 0 0 30px rgba(255,46,99,0.3);
-  }
-  .detail-meta2 {
-    display: flex; flex-wrap: wrap; align-items: center; gap: 10px;
-    margin: 12px 0 16px;
-    font-family: 'Rajdhani', sans-serif; font-size: 13px;
-  }
-  .detail-rating-big {
-    display: flex; align-items: center; gap: 4px;
-    background: rgba(255,215,0,0.1); border: 1px solid rgba(255,215,0,0.3);
-    padding: 3px 10px; border-radius: 6px;
-    color: #FFD700; font-weight: 700; font-size: 14px;
-  }
-  .detail-tag {
-    background: var(--blue-dim); border: 1px solid rgba(8,217,214,0.3);
-    color: var(--blue); padding: 3px 10px; border-radius: 6px; font-size: 12px;
-  }
-  .detail-info-strip { color: var(--grey); }
-
-  .detail-desc-section { padding: 0 24px 24px; }
-  .detail-desc {
-    font-size: 14px; line-height: 1.75; color: rgba(255,255,255,0.7);
-    font-weight: 300; margin-bottom: 24px;
-  }
-  .detail-actions { display: flex; gap: 12px; flex-wrap: wrap; }
-  .detail-credits {
-    padding: 20px 24px; border-top: 1px solid rgba(255,255,255,0.06);
-  }
-  .credits-title {
-    font-family: 'Rajdhani', sans-serif; font-size: 13px; letter-spacing: 2px;
-    color: var(--grey); text-transform: uppercase; margin-bottom: 12px;
-  }
-  .cast-row { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 6px; }
-  .cast-item { flex: 0 0 70px; text-align: center; }
-  .cast-avatar {
-    width: 56px; height: 56px; border-radius: 50%;
-    background: linear-gradient(135deg, rgba(255,46,99,0.2), rgba(8,217,214,0.2));
-    border: 2px solid rgba(255,255,255,0.1);
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'Bebas Neue'; font-size: 20px; color: rgba(255,255,255,0.5);
-    margin: 0 auto 6px;
-  }
-  .cast-name { font-size: 10px; color: var(--grey); font-family: 'Rajdhani'; }
-
-  /* ─── DOWNLOADS SCREEN ─── */
-  .downloads-content { padding: 96px 24px 24px; }
-  .downloads-header {
-    display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 24px;
-  }
-  .page-title {
-    font-family: 'Bebas Neue', sans-serif; font-size: 36px; letter-spacing: 3px;
-    background: linear-gradient(135deg, var(--white), rgba(255,255,255,0.6));
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  }
-  .storage-badge {
-    background: var(--blue-dim); border: 1px solid rgba(8,217,214,0.3);
-    color: var(--blue); padding: 6px 14px; border-radius: 20px;
-    font-family: 'Rajdhani'; font-size: 13px; font-weight: 600;
-  }
-  .storage-bar-wrap { margin-bottom: 28px; }
-  .storage-label {
-    display: flex; justify-content: space-between;
-    font-family: 'Rajdhani'; font-size: 13px; color: var(--grey);
-    margin-bottom: 8px;
-  }
-  .storage-bar {
-    height: 4px; background: rgba(255,255,255,0.08); border-radius: 4px;
-    overflow: hidden;
-  }
-  .storage-fill {
-    height: 100%;
-    background: linear-gradient(to right, var(--red), var(--blue));
-    border-radius: 4px; width: 35%;
-    box-shadow: 0 0 8px var(--blue-glow);
-  }
-  .dl-list { display: flex; flex-direction: column; gap: 14px; }
-  .dl-item {
-    display: flex; align-items: center; gap: 14px;
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(255,255,255,0.06);
-    border-radius: 12px; padding: 14px;
-    transition: all 0.25s; cursor: pointer;
-  }
-  .dl-item:hover {
-    background: rgba(255,46,99,0.05);
-    border-color: rgba(255,46,99,0.2);
-  }
-  .dl-thumb {
-    width: 64px; height: 90px; border-radius: 8px;
-    object-fit: cover; flex-shrink: 0;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-  }
-  .dl-info { flex: 1; min-width: 0; }
-  .dl-title { font-family: 'Rajdhani'; font-size: 16px; font-weight: 700; margin-bottom: 4px; }
-  .dl-meta { font-size: 12px; color: var(--grey); margin-bottom: 8px; }
-  .dl-progress { height: 3px; background: rgba(255,255,255,0.08); border-radius: 4px; }
-  .dl-progress-fill { height: 100%; border-radius: 4px; }
-  .dl-actions { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
-  .dl-size { font-family: 'Rajdhani'; font-size: 13px; color: var(--grey); }
-  .dl-play {
-    width: 36px; height: 36px; border-radius: 50%;
-    background: var(--red); display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 0 12px var(--red-glow); flex-shrink: 0;
-  }
-
-  /* ─── PROFILE SCREEN ─── */
-  .profile-content { padding: 80px 24px 24px; }
-  .profile-hero {
-    text-align: center; padding: 32px 20px 40px;
-    position: relative;
-  }
-  .profile-avatar-big {
-    width: 100px; height: 100px; border-radius: 50%;
-    background: linear-gradient(135deg, var(--red), var(--blue));
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'Bebas Neue'; font-size: 42px; color: var(--white);
-    margin: 0 auto 16px;
-    box-shadow: 0 0 30px var(--red-glow), 0 0 60px rgba(255,46,99,0.2);
-    position: relative;
-  }
-  .profile-avatar-big::after {
-    content: ''; position: absolute; inset: -4px;
-    border-radius: 50%;
-    border: 2px solid transparent;
-    background: linear-gradient(135deg, var(--red), var(--blue)) border-box;
-    -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: destination-out;
-    mask-composite: exclude;
-    animation: glowPulse 3s ease infinite;
-  }
-  .profile-name {
-    font-family: 'Bebas Neue'; font-size: 28px; letter-spacing: 2px;
-    margin-bottom: 4px;
-  }
-  .profile-sub { font-size: 13px; color: var(--grey); font-family: 'Rajdhani'; }
-  .profile-plan {
-    display: inline-flex; align-items: center; gap: 6px;
-    background: var(--red-dim); border: 1px solid rgba(255,46,99,0.4);
-    padding: 5px 16px; border-radius: 20px;
-    font-family: 'Rajdhani'; font-size: 13px; font-weight: 700; color: var(--red);
-    margin-top: 12px; letter-spacing: 1px;
-  }
-  .stats-row {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
-    margin-bottom: 28px;
-  }
-  .stat-card {
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(255,255,255,0.06);
-    border-radius: 12px; padding: 16px; text-align: center;
-  }
-  .stat-num {
-    font-family: 'Bebas Neue'; font-size: 32px; letter-spacing: 1px;
-    background: linear-gradient(135deg, var(--red), var(--blue));
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  }
-  .stat-label { font-family: 'Rajdhani'; font-size: 11px; color: var(--grey); letter-spacing: 1px; }
-  .profile-menu { display: flex; flex-direction: column; gap: 2px; }
-  .menu-item {
-    display: flex; align-items: center; gap: 14px;
-    padding: 16px 18px; border-radius: 10px;
-    cursor: pointer; transition: all 0.2s;
-    position: relative;
-  }
-  .menu-item:hover { background: rgba(255,255,255,0.04); }
-  .menu-item .mi-icon {
-    width: 38px; height: 38px; border-radius: 10px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 16px; flex-shrink: 0;
-  }
-  .mi-red { background: var(--red-dim); color: var(--red); }
-  .mi-blue { background: var(--blue-dim); color: var(--blue); }
-  .mi-grey { background: rgba(255,255,255,0.05); color: var(--grey); }
-  .menu-item .mi-label { flex: 1; font-family: 'Rajdhani'; font-size: 15px; font-weight: 600; }
-  .menu-item .mi-sub { font-size: 11px; color: var(--grey); }
-  .menu-item i.fa-chevron-right { color: var(--grey); font-size: 12px; }
-  .branding-footer {
-    text-align: center; padding: 28px 16px 12px;
-    font-family: 'Rajdhani'; font-size: 12px; color: rgba(255,255,255,0.2);
-    letter-spacing: 2px; text-transform: uppercase;
-    border-top: 1px solid rgba(255,255,255,0.05); margin-top: 24px;
-  }
-  .branding-footer span { color: var(--blue); }
-
-  /* ─── TOAST / NOTIFICATION ─── */
-  .toast {
-    position: fixed; top: 80px; right: 20px; z-index: 999;
-    background: rgba(13,13,13,0.95); backdrop-filter: blur(16px);
-    border: 1px solid rgba(8,217,214,0.4);
-    border-radius: 10px; padding: 12px 20px;
-    display: flex; align-items: center; gap: 10px;
-    font-family: 'Rajdhani'; font-size: 14px; font-weight: 600;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.6), 0 0 20px var(--blue-dim);
-    opacity: 0; transform: translateX(40px);
-    transition: all 0.4s cubic-bezier(0.34,1.56,0.64,1);
-    pointer-events: none;
-  }
-  .toast.show { opacity: 1; transform: translateX(0); }
-  .toast i { color: var(--blue); }
-
-  /* ─── GLASSMORPHISM CARDS ─── */
-  .glass-card {
-    background: rgba(255,255,255,0.04);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 14px;
-  }
-
-  /* Decorative background grid */
-  body::before {
-    content: '';
-    position: fixed; inset: 0; z-index: 0;
-    pointer-events: none;
-    background-image:
-      linear-gradient(rgba(255,46,99,0.02) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255,46,99,0.02) 1px, transparent 1px);
-    background-size: 60px 60px;
-  }
 </style>
 </head>
+
 <body>
 
-<!-- TOP NAV -->
-<nav class="topnav">
-  <div class="logo">Movie<span>Max</span></div>
-  <div class="topnav-right">
-    <span class="topnav-tag">TRIDENT TECH</span>
-    <div class="avatar" onclick="showScreen('profile')">U</div>
-  </div>
-</nav>
-
-<!-- TOAST -->
-<div class="toast" id="toast"><i class="fa fa-check-circle"></i> <span id="toast-msg">Added to downloads!</span></div>
-
-<!-- ═══════════════════════════════ HOME SCREEN ═══════════════════════════════ -->
-<div class="screen active" id="screen-home">
-
-  <!-- HERO -->
-  <div class="hero" onclick="openDetail(0)">
-    <div class="hero-bg">
-      <div class="hero-poster" id="hero-poster"></div>
-    </div>
-    <div class="hero-overlay"></div>
-    <div class="hero-overlay-sides"></div>
-    <div class="hero-scan"></div>
-    <div class="hero-content">
-      <div class="hero-badge"><i class="fa fa-fire"></i> TRENDING #1</div>
-      <h1 class="hero-title">DUNE:<em>Part Two</em></h1>
-      <div class="hero-meta">
-        <span class="rating"><i class="fa fa-star"></i> 8.5</span>
-        <span class="dot"></span>
-        <span>2024</span>
-        <span class="dot"></span>
-        <span>2h 46m</span>
-        <span class="dot"></span>
-        <span>Sci-Fi</span>
-      </div>
-      <p class="hero-desc">Paul Atreides unites with the Fremen while on a warpath of revenge against the conspirators who destroyed his family. Facing a choice between the love of his life and the fate of the known universe.</p>
-      <div class="hero-buttons">
-        <button class="btn-primary" onclick="downloadMovie(0, event)">
-          <i class="fa fa-download"></i> DOWNLOAD
-        </button>
-        <button class="btn-secondary" onclick="openDetail(0, event)">
-          <i class="fa fa-play"></i> TRAILER
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- TRENDING NOW -->
-  <div class="section">
-    <div class="section-header">
-      <div class="section-title">Trending Now</div>
-      <button class="see-all">See All</button>
-    </div>
-    <div class="cards-row" id="row-trending"></div>
-  </div>
-
-  <!-- TOP RATED -->
-  <div class="section">
-    <div class="section-header">
-      <div class="section-title">Top Rated</div>
-      <button class="see-all">See All</button>
-    </div>
-    <div class="cards-row" id="row-toprated"></div>
-  </div>
-
-  <!-- ACTION HITS -->
-  <div class="section">
-    <div class="section-header">
-      <div class="section-title">Action Hits</div>
-      <button class="see-all">See All</button>
-    </div>
-    <div class="cards-row" id="row-action"></div>
-  </div>
-
-  <!-- NEW RELEASES (wide cards) -->
-  <div class="section">
-    <div class="section-header">
-      <div class="section-title">New Releases</div>
-      <button class="see-all">See All</button>
-    </div>
-    <div class="cards-row" id="row-new"></div>
-  </div>
-
+<!-- NAV -->
+<div class="topnav">
+  <div class="logo">MOVIE MAX</div>
 </div>
 
-<!-- ═══════════════════════════════ SEARCH SCREEN ═══════════════════════════════ -->
-<div class="screen" id="screen-search">
-  <div class="search-screen-content">
-    <div class="search-bar-wrap">
-      <i class="fa fa-search"></i>
-      <input type="text" class="search-input" id="search-input"
-        placeholder="Search movies, genres, actors..." oninput="liveSearch(this.value)">
-    </div>
-    <div class="search-categories">
-      <span class="cat-tag active" onclick="filterCat(this,'All')">All</span>
-      <span class="cat-tag" onclick="filterCat(this,'Action')">Action</span>
-      <span class="cat-tag" onclick="filterCat(this,'Sci-Fi')">Sci-Fi</span>
-      <span class="cat-tag" onclick="filterCat(this,'Drama')">Drama</span>
-      <span class="cat-tag" onclick="filterCat(this,'Thriller')">Thriller</span>
-      <span class="cat-tag" onclick="filterCat(this,'Horror')">Horror</span>
-      <span class="cat-tag" onclick="filterCat(this,'Comedy')">Comedy</span>
-    </div>
-    <div class="search-grid" id="search-grid"></div>
-    <div class="search-empty" id="search-empty" style="display:none">
-      <i class="fa fa-film"></i>
-      <p>No movies found</p>
-    </div>
+<!-- HERO -->
+<section class="hero">
+  <h1>Movie Max</h1>
+  <p>Stream & Discover Movies</p>
+</section>
+
+<!-- TRENDING -->
+<section class="section">
+  <h2>Trending Now</h2>
+  <div class="grid">
+    <div class="card">Neon Eclipse</div>
+    <div class="card">Dark Horizon</div>
+    <div class="card">Skyfall Code</div>
+    <div class="card">Titan Night</div>
+    <div class="card">Void Runner</div>
+    <div class="card">Cyber Blade</div>
   </div>
-</div>
+</section>
 
-<!-- ═══════════════════════════════ DETAIL SCREEN ═══════════════════════════════ -->
-<div class="screen" id="screen-detail">
-  <div class="detail-hero">
-    <div class="detail-bg" id="detail-bg"></div>
-    <div class="detail-overlay"></div>
-    <div class="detail-back" onclick="goBack()"><i class="fa fa-arrow-left"></i></div>
-    <div class="detail-poster-wrap">
-      <img id="detail-poster" src="" alt="">
-    </div>
+<!-- POPULAR -->
+<section class="section">
+  <h2>Popular Movies</h2>
+  <div class="grid">
+    <div class="card">Alpha Zone</div>
+    <div class="card">Night Drive</div>
+    <div class="card">Solar Drift</div>
+    <div class="card">Neon City</div>
   </div>
-  <div class="detail-content">
-    <h1 class="detail-title" id="detail-title"></h1>
-    <div class="detail-meta2">
-      <div class="detail-rating-big"><i class="fa fa-star"></i> <span id="detail-rating"></span></div>
-      <span class="detail-tag" id="detail-genre"></span>
-      <span class="detail-info-strip" id="detail-info"></span>
-    </div>
-  </div>
-  <div class="detail-desc-section">
-    <p class="detail-desc" id="detail-desc"></p>
-    <div class="detail-actions">
-      <button class="btn-primary" id="dl-btn" onclick="downloadCurrent()">
-        <i class="fa fa-download"></i> DOWNLOAD NOW
-      </button>
-      <button class="btn-secondary" onclick="showToast('Opening trailer…','fa-play')">
-        <i class="fa fa-play"></i> WATCH TRAILER
-      </button>
-    </div>
-  </div>
-  <div class="detail-credits">
-    <div class="credits-title">Cast</div>
-    <div class="cast-row" id="cast-row"></div>
-  </div>
-  <div class="section">
-    <div class="section-header"><div class="section-title">You May Also Like</div></div>
-    <div class="cards-row" id="related-row"></div>
-  </div>
-</div>
+</section>
 
-<!-- ═══════════════════════════════ DOWNLOADS SCREEN ═══════════════════════════════ -->
-<div class="screen" id="screen-downloads">
-  <div class="downloads-content">
-    <div class="downloads-header">
-      <div class="page-title">DOWNLOADS</div>
-      <div class="storage-badge"><i class="fa fa-hdd"></i> 3.5 / 10 GB</div>
-    </div>
-    <div class="storage-bar-wrap">
-      <div class="storage-label"><span>Storage Used</span><span>3.5 GB of 10 GB</span></div>
-      <div class="storage-bar"><div class="storage-fill"></div></div>
-    </div>
-    <div class="dl-list" id="dl-list">
-      <div style="text-align:center;padding:60px 20px;color:var(--grey)">
-        <i class="fa fa-download" style="font-size:40px;opacity:0.2;display:block;margin-bottom:16px"></i>
-        <p style="font-family:Rajdhani;font-size:16px;letter-spacing:1px">No downloads yet.<br>Find a movie and tap Download!</p>
-      </div>
-    </div>
-  </div>
-</div>
+<!-- FOOTER SPACE -->
+<div style="height: 80px;"></div>
 
-<!-- ═══════════════════════════════ PROFILE SCREEN ═══════════════════════════════ -->
-<div class="screen" id="screen-profile">
-  <div class="profile-content">
-    <div class="profile-hero">
-      <div class="profile-avatar-big">U</div>
-      <div class="profile-name">USERNAME</div>
-      <div class="profile-sub">member@email.com</div>
-      <div class="profile-plan"><i class="fa fa-crown"></i> PREMIUM PLAN</div>
-    </div>
-    <div class="stats-row">
-      <div class="stat-card">
-        <div class="stat-num" id="stat-dl">0</div>
-        <div class="stat-label">Downloads</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-num">47</div>
-        <div class="stat-label">Watched</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-num">12</div>
-        <div class="stat-label">Watchlist</div>
-      </div>
-    </div>
-    <div class="profile-menu">
-      <div class="menu-item" onclick="showToast('Account settings coming soon','fa-user')">
-        <div class="mi-icon mi-red"><i class="fa fa-user"></i></div>
-        <div>
-          <div class="mi-label">Account</div>
-          <div class="mi-sub">Edit your profile</div>
-        </div>
-        <i class="fa fa-chevron-right"></i>
-      </div>
-      <div class="menu-item" onclick="showToast('Subscription info coming soon','fa-crown')">
-        <div class="mi-icon mi-blue"><i class="fa fa-crown"></i></div>
-        <div>
-          <div class="mi-label">Subscription</div>
-          <div class="mi-sub">Premium · Renews Apr 15</div>
-        </div>
-        <i class="fa fa-chevron-right"></i>
-      </div>
-      <div class="menu-item" onclick="showScreen('downloads')">
-        <div class="mi-icon mi-red"><i class="fa fa-download"></i></div>
-        <div>
-          <div class="mi-label">My Downloads</div>
-          <div class="mi-sub" id="prof-dl-count">0 movies</div>
-        </div>
-        <i class="fa fa-chevron-right"></i>
-      </div>
-      <div class="menu-item" onclick="showToast('Notification settings coming soon','fa-bell')">
-        <div class="mi-icon mi-grey"><i class="fa fa-bell"></i></div>
-        <div>
-          <div class="mi-label">Notifications</div>
-          <div class="mi-sub">Manage alerts</div>
-        </div>
-        <i class="fa fa-chevron-right"></i>
-      </div>
-      <div class="menu-item" onclick="showToast('Video quality settings coming soon','fa-sliders')">
-        <div class="mi-icon mi-grey"><i class="fa fa-sliders"></i></div>
-        <div>
-          <div class="mi-label">Playback Quality</div>
-          <div class="mi-sub">Auto (up to 4K)</div>
-        </div>
-        <i class="fa fa-chevron-right"></i>
-      </div>
-      <div class="menu-item" onclick="showToast('About page coming soon','fa-info')">
-        <div class="mi-icon mi-blue"><i class="fa fa-info-circle"></i></div>
-        <div>
-          <div class="mi-label">About Movie Max</div>
-          <div class="mi-sub">v1.0.0 · Trident Technologies</div>
-        </div>
-        <i class="fa fa-chevron-right"></i>
-      </div>
-    </div>
-    <div class="branding-footer">
-      Powered by <span>Trident Technologies</span> · © 2024 Movie Max. All rights reserved.
-    </div>
-  </div>
-</div>
-
-<!-- ═══════════════════════════════ BOTTOM NAV ═══════════════════════════════ -->
-<nav class="bottom-nav">
-  <div class="nav-item active" id="nav-home" onclick="showScreen('home')">
-    <i class="fa fa-home"></i>
-    <span>Home</span>
-  </div>
-  <div class="nav-item" id="nav-search" onclick="showScreen('search')">
-    <i class="fa fa-search"></i>
-    <span>Search</span>
-  </div>
-  <div class="nav-item" id="nav-downloads" onclick="showScreen('downloads')">
-    <i class="fa fa-download"></i>
-    <span>Downloads</span>
-  </div>
-  <div class="nav-item" id="nav-profile" onclick="showScreen('profile')">
-    <i class="fa fa-user"></i>
-    <span>Profile</span>
-  </div>
-</nav>
-
-<script>
-// ─── DATA ───
-const MOVIES = [
-  {
-    id: 0,
-    title: "Dune: Part Two",
-    year: 2024, rating: 8.5, duration: "2h 46m", genre: "Sci-Fi",
-    desc: "Paul Atreides unites with Chani and the Fremen while on a warpath of revenge against the conspirators who destroyed his family. Facing a choice between the love of his life and the fate of the known universe.",
-    poster: "https://m.media-amazon.com/images/M/MV5BODI0YjNhNjUtYjM0My00MTUwLWFlYTMtMWI2NGUzYjNjNGIyXkEyXkFqcGdeQXVyMDM2NDM2MQ@@._V1_SX300.jpg",
-    bg: "https://m.media-amazon.com/images/M/MV5BMDBmYTZjNjUtN2M1MS00MTQ2LTk2ODgtNzc2M2QyZGE5NTVjXkEyXkFqcGdeQXVyNzAwMjU2MTY@._V1_.jpg",
-    cast: ["T.C","Z.S","R.C","J.M","A.J"],
-    archiveId: null,
-    size: "4.2 GB"
-  },
-  {
-    id: 1,
-    title: "Oppenheimer",
-    year: 2023, rating: 8.9, duration: "3h 0m", genre: "Drama",
-    desc: "The story of American scientist J. Robert Oppenheimer and his role in the development of the atomic bomb during World War II.",
-    poster: "https://m.media-amazon.com/images/M/MV5BMDBmYTZjNjUtN2M1MS00MTQ2LTk2ODgtNzc2M2QyZGE5NTVjXkEyXkFqcGdeQXVyNzAwMjU2MTY@._V1_SX300.jpg",
-    bg: "https://m.media-amazon.com/images/M/MV5BMDBmYTZjNjUtN2M1MS00MTQ2LTk2ODgtNzc2M2QyZGE5NTVjXkEyXkFqcGdeQXVyNzAwMjU2MTY@._V1_.jpg",
-    cast: ["C.M","E.B","M.R","R.D","F.M"],
-    archiveId: null,
-    size: "5.1 GB"
-  },
-  {
-    id: 2,
-    title: "John Wick 4",
-    year: 2023, rating: 7.7, duration: "2h 49m", genre: "Action",
-    desc: "John Wick uncovers a path to defeating the High Table. But before he can earn his freedom, Wick must face off against a new enemy with powerful alliances across the globe.",
-    poster: "https://m.media-amazon.com/images/M/MV5BMDExZGMyOTMtMDgyYi00NGIwLWJhMTEtOTdkZGFjNzQ1MTEyXkEyXkFqcGdeQXVyMjM4NTM5NDY@._V1_SX300.jpg",
-    bg: "",
-    cast: ["K.R","D.P","B.N","I.M","C.C"],
-    archiveId: null,
-    size: "3.8 GB"
-  },
-  {
-    id: 3,
-    title: "Guardians Vol. 3",
-    year: 2023, rating: 7.9, duration: "2h 30m", genre: "Action",
-    desc: "Still reeling from the loss of Gamora, Peter Quill rallies his team to defend the universe and one of their own.",
-    poster: "https://m.media-amazon.com/images/M/MV5BMDllNTIyNjUtZTMwYi00NGMwLWJlNDQtZTdlNWUwNzg1ZjliXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_SX300.jpg",
-    bg: "",
-    cast: ["C.P","Z.S","D.B","B.D","P.S"],
-    archiveId: null,
-    size: "3.5 GB"
-  },
-  {
-    id: 4,
-    title: "The Dark Knight",
-    year: 2008, rating: 9.0, duration: "2h 32m", genre: "Action",
-    desc: "When the menace known as the Joker wreaks havoc and chaos on the people of Gotham, Batman must accept one of the greatest psychological and physical tests.",
-    poster: "https://m.media-amazon.com/images/M/MV5BMTMxNTMwODM0NF5BMl5BanBnXkFtZTcwODAyMTk2Mw@@._V1_SX300.jpg",
-    bg: "",
-    cast: ["C.B","H.L","A.E","M.G","G.O"],
-    archiveId: "the-dark-knight-2008",
-    size: "2.8 GB"
-  },
-  {
-    id: 5,
-    title: "Inception",
-    year: 2010, rating: 8.8, duration: "2h 28m", genre: "Sci-Fi",
-    desc: "A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a C.E.O.",
-    poster: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_SX300.jpg",
-    bg: "",
-    cast: ["L.D","J.G","E.P","T.H","C.C"],
-    archiveId: "inception-2010",
-    size: "2.5 GB"
-  },
-  {
-    id: 6,
-    title: "Interstellar",
-    year: 2014, rating: 8.7, duration: "2h 49m", genre: "Sci-Fi",
-    desc: "A team of explorers travel through a wormhole in space in an attempt to ensure humanity's survival.",
-    poster: "https://m.media-amazon.com/images/M/MV5BZjdkOTU3MDktN2IxOS00OGEyLWFmMjktY2FiMmZkNWIyODZiXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_SX300.jpg",
-    bg: "",
-    cast: ["M.M","A.H","J.C","M.C","W.B"],
-    archiveId: "Interstellar_2014",
-    size: "3.9 GB"
-  },
-  {
-    id: 7,
-    title: "Mad Max: Fury Road",
-    year: 2015, rating: 8.1, duration: "2h 0m", genre: "Action",
-    desc: "In a post-apocalyptic wasteland, a woman rebels against a tyrannical ruler in search for her homeland.",
-    poster: "https://m.media-amazon.com/images/M/MV5BN2EwM2I5OWMtMGQyMi00Zjg1LWJkNTctZTdjYTA4OGUwZjMyXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_SX300.jpg",
-    bg: "",
-    cast: ["T.H","C.T","N.H","H.K","Z.E"],
-    archiveId: null,
-    size: "2.2 GB"
-  },
-  {
-    id: 8,
-    title: "The Matrix",
-    year: 1999, rating: 8.7, duration: "2h 16m", genre: "Sci-Fi",
-    desc: "A computer hacker learns from mysterious rebels about the true nature of his reality and his role in the war against its controllers.",
-    poster: "https://m.media-amazon.com/images/M/MV5BNzQzOTk3OTAtNDQ0Zi00ZTVlLTM5YTUtZWU2OGYxNGViZXVhXkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_SX300.jpg",
-    bg: "",
-    cast: ["K.R","L.F","C.W","H.W","J.P"],
-    archiveId: "TheMatrix",
-    size: "1.9 GB"
-  },
-  {
-    id: 9,
-    title: "Everything Everywhere",
-    year: 2022, rating: 7.8, duration: "2h 19m", genre: "Sci-Fi",
-    desc: "A middle-aged Chinese immigrant is swept up in an insane adventure in which she alone can save existence.",
-    poster: "https://m.media-amazon.com/images/M/MV5BYTdiOTIyZTQtNmQ1OS00NjZlLWIyMTgtYzk5Y2M3ZDVmMDk1XkEyXkFqcGdeQXVyMTAyMjQ3NzQ1._V1_SX300.jpg",
-    bg: "",
-    cast: ["M.K","S.H","K.H","J.C","S.Q"],
-    archiveId: null,
-    size: "2.1 GB"
-  },
-  {
-    id: 10,
-    title: "Top Gun: Maverick",
-    year: 2022, rating: 8.2, duration: "2h 10m", genre: "Action",
-    desc: "After thirty years, Maverick is still pushing the envelope as a top naval aviator, but must confront ghosts of his past when he leads TOP GUN's elite graduates on a specialized mission.",
-    poster: "https://m.media-amazon.com/images/M/MV5BOWZlMjhhZTYtOTEzNS00ZTQ1LWIyMmEtZWFmZTdlNmQ5OWU3XkEyXkFqcGdeQXVyMjkwOTAyMDU@._V1_SX300.jpg",
-    bg: "",
-    cast: ["T.C","M.T","J.H","G.E","V.K"],
-    archiveId: null,
-    size: "3.1 GB"
-  },
-  {
-    id: 11,
-    title: "Parasite",
-    year: 2019, rating: 8.5, duration: "2h 12m", genre: "Thriller",
-    desc: "Greed and class discrimination threaten the newly formed symbiotic relationship between the wealthy Park family and the destitute Kim clan.",
-    poster: "https://m.media-amazon.com/images/M/MV5BYWZjMjk3ZTItODQ2ZC00NTY5LWE0ZDYtZTI3MjcwN2Q5NTVkXkEyXkFqcGdeQXVyODk4OTc3MTY@._V1_SX300.jpg",
-    bg: "",
-    cast: ["S.I","L.S","C.W","P.S","J.H"],
-    archiveId: null,
-    size: "1.8 GB"
-  }
-];
-
-// ─── STATE ───
-let downloads = [];
-let currentDetailId = 0;
-let prevScreen = 'home';
-let currentFilter = 'All';
-
-// ─── INIT ───
-window.onload = () => {
-  buildRows();
-  buildSearchGrid(MOVIES);
-
-  // Hero poster fallback
-  const heroPosterEl = document.getElementById('hero-poster');
-  heroPosterEl.style.backgroundImage = `url('${MOVIES[0].poster}')`;
-};
-
-function buildRows() {
-  const trending = [0, 2, 3, 10, 7];
-  const topRated = [4, 5, 6, 8, 11, 9];
-  const action = [2, 3, 4, 7, 10];
-  const newRel = [0, 1, 9, 10];
-
-  renderCards('row-trending', trending.map(i => MOVIES[i]));
-  renderCards('row-toprated', topRated.map(i => MOVIES[i]));
-  renderCards('row-action', action.map(i => MOVIES[i]));
-  renderWideCards('row-new', newRel.map(i => MOVIES[i]));
-}
-
-function renderCards(rowId, movies) {
-  const row = document.getElementById(rowId);
-  row.innerHTML = '';
-  movies.forEach((m, idx) => {
-    const card = document.createElement('div');
-    card.className = 'movie-card';
-    card.style.animationDelay = `${idx * 0.06}s`;
-    card.onclick = () => openDetail(m.id);
-    card.innerHTML = `
-      <img class="movie-card-img" src="${m.poster}" alt="${m.title}"
-           onerror="this.src='https://via.placeholder.com/160x240/1A1A1A/FF2E63?text=${encodeURIComponent(m.title)}'">
-      <div class="rating-badge"><i class="fa fa-star"></i> ${m.rating}</div>
-      <div class="movie-card-overlay">
-        <div class="card-play"><i class="fa fa-play"></i></div>
-        <div class="card-title-hover">${m.title}</div>
-      </div>
-      <div class="card-info">
-        <div class="card-name">${m.title}</div>
-        <div class="card-year">${m.year} · ${m.genre}</div>
-      </div>
-    `;
-    row.appendChild(card);
-  });
-}
-
-function renderWideCards(rowId, movies) {
-  const row = document.getElementById(rowId);
-  row.innerHTML = '';
-  movies.forEach((m, idx) => {
-    const card = document.createElement('div');
-    card.className = 'wide-card';
-    card.style.animationDelay = `${idx * 0.08}s`;
-    card.onclick = () => openDetail(m.id);
-    const isNew = (2024 - m.year) <= 1;
-    card.innerHTML = `
-      <img class="wide-card-img" src="${m.poster}" alt="${m.title}"
-           onerror="this.src='https://via.placeholder.com/280x160/1A1A1A/08D9D6?text=${encodeURIComponent(m.title)}'">
-      <div class="wide-card-content">
-        <div class="wide-card-title">${m.title}</div>
-        <div class="wide-card-sub">${m.year} · ${m.duration} · <span style="color:#FFD700">★ ${m.rating}</span></div>
-        <span class="wide-card-badge ${isNew ? 'badge-red' : 'badge-blue'}">${isNew ? '🔥 NEW' : m.genre.toUpperCase()}</span>
-      </div>
-    `;
-    row.appendChild(card);
-  });
-}
-
-// ─── SEARCH ───
-function buildSearchGrid(movies) {
-  const grid = document.getElementById('search-grid');
-  const empty = document.getElementById('search-empty');
-  grid.innerHTML = '';
-  if (!movies.length) {
-    grid.style.display = 'none'; empty.style.display = 'block'; return;
-  }
-  grid.style.display = 'grid'; empty.style.display = 'none';
-  movies.forEach((m, i) => {
-    const card = document.createElement('div');
-    card.className = 'search-card';
-    card.style.animationDelay = `${i * 0.04}s`;
-    card.onclick = () => openDetail(m.id);
-    card.innerHTML = `
-      <img src="${m.poster}" alt="${m.title}"
-           onerror="this.src='https://via.placeholder.com/120x180/1A1A1A/FF2E63?text=${encodeURIComponent(m.title.split(' ')[0])}'">
-      <div class="search-card-info">
-        <div class="search-card-name">${m.title}</div>
-        <div class="search-rating">★ ${m.rating}</div>
-      </div>
-    `;
-    grid.appendChild(card);
-  });
-}
-
-function liveSearch(val) {
-  let filtered = MOVIES.filter(m =>
-    m.title.toLowerCase().includes(val.toLowerCase()) ||
-    m.genre.toLowerCase().includes(val.toLowerCase())
-  );
-  if (currentFilter !== 'All') filtered = filtered.filter(m => m.genre === currentFilter);
-  buildSearchGrid(filtered);
-}
-
-function filterCat(el, cat) {
-  document.querySelectorAll('.cat-tag').forEach(t => t.classList.remove('active'));
-  el.classList.add('active');
-  currentFilter = cat;
-  const val = document.getElementById('search-input').value;
-  liveSearch(val);
-}
-
-// ─── DETAIL ───
-function openDetail(id, e) {
-  if (e) e.stopPropagation();
-  currentDetailId = id;
-  const m = MOVIES[id];
-
-  document.getElementById('detail-bg').style.backgroundImage = `url('${m.bg || m.poster}')`;
-  document.getElementById('detail-poster').src = m.poster;
-  document.getElementById('detail-poster').onerror = function() {
-    this.src = `https://via.placeholder.com/120x180/1A1A1A/FF2E63?text=${encodeURIComponent(m.title)}`;
-  };
-  document.getElementById('detail-title').textContent = m.title;
-  document.getElementById('detail-rating').textContent = m.rating;
-  document.getElementById('detail-genre').textContent = m.genre;
-  document.getElementById('detail-info').textContent = `${m.year} · ${m.duration}`;
-  document.getElementById('detail-desc').textContent = m.desc;
-
-  // Cast
-  const castRow = document.getElementById('cast-row');
-  castRow.innerHTML = '';
-  m.cast.forEach(c => {
-    castRow.innerHTML += `
-      <div class="cast-item">
-        <div class="cast-avatar">${c}</div>
-        <div class="cast-name">${c}</div>
-      </div>
-    `;
-  });
-
-  // Related
-  const related = MOVIES.filter(mv => mv.id !== id && mv.genre === m.genre).slice(0, 5);
-  renderCards('related-row', related.length ? related : MOVIES.slice(0,4));
-
-  prevScreen = document.querySelector('.screen.active').id.replace('screen-','');
-  showScreen('detail');
-}
-
-function goBack() { showScreen(prevScreen); }
-
-function downloadCurrent() { downloadMovie(currentDetailId); }
-
-// ─── DOWNLOADS ───
-function downloadMovie(id, e) {
-  if (e) e.stopPropagation();
-  const m = MOVIES[id];
-  const exists = downloads.find(d => d.id === id);
-  if (exists) { showToast(`${m.title} already downloaded!`, 'fa-check'); return; }
-  downloads.push({ ...m, progress: 100 });
-  renderDownloads();
-  showToast(`${m.title} added to downloads!`, 'fa-download');
-  updateProfileStats();
-}
-
-function renderDownloads() {
-  const list = document.getElementById('dl-list');
-  if (!downloads.length) {
-    list.innerHTML = `
-      <div style="text-align:center;padding:60px 20px;color:var(--grey)">
-        <i class="fa fa-download" style="font-size:40px;opacity:0.2;display:block;margin-bottom:16px"></i>
-        <p style="font-family:Rajdhani;font-size:16px;letter-spacing:1px">No downloads yet.<br>Find a movie and tap Download!</p>
-      </div>`;
-    return;
-  }
-  list.innerHTML = '';
-  const colors = ['var(--red)', 'var(--blue)', '#9b59b6', '#e67e22'];
-  downloads.forEach((m, i) => {
-    const archiveLink = m.archiveId
-      ? `https://archive.org/download/${m.archiveId}`
-      : '#';
-    list.innerHTML += `
-      <div class="dl-item" onclick="${m.archiveId ? `window.open('${archiveLink}','_blank')` : `showToast('Link not configured yet — add Archive.org ID','fa-link')`}">
-        <img class="dl-thumb" src="${m.poster}" alt="${m.title}"
-             onerror="this.src='https://via.placeholder.com/64x90/1A1A1A/FF2E63?text=${encodeURIComponent(m.title.split(' ')[0])}'">
-        <div class="dl-info">
-          <div class="dl-title">${m.title}</div>
-          <div class="dl-meta">${m.year} · ${m.genre} · ${m.duration}</div>
-          <div class="dl-progress">
-            <div class="dl-progress-fill" style="width:${m.progress}%;background:${colors[i%4]}"></div>
-          </div>
-        </div>
-        <div class="dl-actions">
-          <div class="dl-size">${m.size}</div>
-          <div class="dl-play"><i class="fa fa-play" style="font-size:12px;margin-left:2px"></i></div>
-        </div>
-      </div>
-    `;
-  });
-}
-
-function updateProfileStats() {
-  document.getElementById('stat-dl').textContent = downloads.length;
-  document.getElementById('prof-dl-count').textContent = `${downloads.length} movie${downloads.length !== 1 ? 's' : ''}`;
-}
-
-// ─── SCREENS ───
-function showScreen(name) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById('screen-' + name).classList.add('active');
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  const nav = document.getElementById('nav-' + name);
-  if (nav) nav.classList.add('active');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-
-  if (name === 'downloads') renderDownloads();
-  if (name === 'search') {
-    buildSearchGrid(MOVIES);
-    document.getElementById('search-input').value = '';
-    currentFilter = 'All';
-    document.querySelectorAll('.cat-tag').forEach((t, i) => {
-      t.classList.toggle('active', i === 0);
-    });
-  }
-}
-
-// ─── TOAST ───
-let toastTimer;
-function showToast(msg, icon = 'fa-check-circle') {
-  const t = document.getElementById('toast');
-  t.querySelector('i').className = `fa ${icon}`;
-  document.getElementById('toast-msg').textContent = msg;
-  t.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
-}
-</script>
 </body>
 </html>
